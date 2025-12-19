@@ -83,21 +83,28 @@ class _HomeScreenState extends State<HomeScreen> {
                   child: Column(
                     mainAxisAlignment: MainAxisAlignment.center,
                     children: [
-                      const Icon(Icons.eco, size: 80, color: Colors.white),
+                      const Icon(Icons.eco, size: 80, color: Colors.white, shadows: [Shadow(color: Colors.black54,blurRadius: 5, offset: Offset(0, 3))],),
                       const SizedBox(height: 10),
                       const Text(
-                        'ตู้ปลูกผักอัจฉริยะ',
+                        'ตู้ปลูกผัก demo',
                         style: TextStyle(
                           color: Colors.white,
                           fontSize: 28,
                           fontWeight: FontWeight.bold,
-                          shadows: [Shadow(color: Colors.black54, blurRadius: 10, offset: Offset(0, 3))],
+                          shadows: [Shadow(color: Colors.black54, blurRadius: 10, offset: Offset(0, 13))],
                         ),
                       ),
                       const SizedBox(height: 5),
                       const Text(
-                        'ระบบไฮโดรโปนิกส์อัจฉริยะ',
-                        style: TextStyle(color: Colors.white70, fontSize: 16),
+                        'ระบบไฮโดรโปนิกส์ควบคุมโดย PID',
+                        style: TextStyle(
+                          color: Colors.white70,
+                          fontSize: 16,
+                          shadows: [Shadow(color: Colors.black54,blurRadius: 5, offset: Offset(0, 3))],
+
+
+
+                        ),
                       ),
                     ],
                   ),
@@ -233,6 +240,7 @@ class HistoryScreen extends StatelessWidget {
 }
 
 // หน้า 3: ควบคุมอุปกรณ์
+// หน้า 3: ควบคุมอุปกรณ์ (เพิ่มควบคุมไฟ)
 class ControlScreen extends StatefulWidget {
   const ControlScreen({super.key});
 
@@ -242,9 +250,10 @@ class ControlScreen extends StatefulWidget {
 
 class _ControlScreenState extends State<ControlScreen> {
   int pumpMode = 0; // 0 = Off, 1 = On, 2 = Auto
+  int lightMode = 0; // 0 = Off, 1 = On, 2 = Auto (เพิ่มส่วนนี้)
 
-  String getModeText() {
-    switch (pumpMode) {
+  String getModeText(int mode) {
+    switch (mode) {
       case 0:
         return 'ปิด';
       case 1:
@@ -256,8 +265,8 @@ class _ControlScreenState extends State<ControlScreen> {
     }
   }
 
-  Color getModeColor() {
-    switch (pumpMode) {
+  Color getModeColor(int mode) {
+    switch (mode) {
       case 0:
         return Colors.red;
       case 1:
@@ -269,8 +278,8 @@ class _ControlScreenState extends State<ControlScreen> {
     }
   }
 
-  IconData getModeIcon() {
-    switch (pumpMode) {
+  IconData getModeIcon(int mode) {
+    switch (mode) {
       case 0:
         return Icons.power_off;
       case 1:
@@ -285,92 +294,29 @@ class _ControlScreenState extends State<ControlScreen> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(title: const Text('ควบคุมอุปกรณ์'), centerTitle: true, backgroundColor: Colors.green),
-      body: Padding(
+      appBar: AppBar(
+        title: const Text('ควบคุมอุปกรณ์'),
+        centerTitle: true,
+        backgroundColor: Colors.green,
+      ),
+      body: SingleChildScrollView(
         padding: const EdgeInsets.all(24.0),
         child: Column(
-          mainAxisAlignment: MainAxisAlignment.center,
           children: [
-            Container(
-              padding: const EdgeInsets.all(24),
-              decoration: BoxDecoration(
-                color: Colors.white,
-                borderRadius: BorderRadius.circular(20),
-                boxShadow: [
-                  BoxShadow(color: Colors.black.withOpacity(0.1), blurRadius: 15, offset: const Offset(0, 8)),
-                ],
-              ),
-              child: Column(
-                children: [
-                  Row(
-                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                    children: [
-                      Row(
-                        children: [
-                          Icon(Icons.water_drop, size: 40, color: getModeColor()),
-                          const SizedBox(width: 16),
-                          const Text('ปั๊มน้ำ', style: TextStyle(fontSize: 24, fontWeight: FontWeight.bold)),
-                        ],
-                      ),
-                      Row(
-                        children: [
-                          Column(
-                            children: [
-                              IconButton(
-                                icon: Icon(Icons.power_off,
-                                    color: pumpMode == 0 ? Colors.red : Colors.grey[400], size: 36),
-                                onPressed: () => setState(() => pumpMode = 0),
-                              ),
-                              const Text('ปิด', style: TextStyle(fontSize: 14)),
-                            ],
-                          ),
-                          const SizedBox(width: 16),
-                          Column(
-                            children: [
-                              IconButton(
-                                icon: Icon(Icons.power_settings_new,
-                                    color: pumpMode == 1 ? Colors.green : Colors.grey[400], size: 36),
-                                onPressed: () => setState(() => pumpMode = 1),
-                              ),
-                              const Text('เปิด', style: TextStyle(fontSize: 14)),
-                            ],
-                          ),
-                          const SizedBox(width: 16),
-                          Column(
-                            children: [
-                              IconButton(
-                                icon: Icon(Icons.auto_awesome,
-                                    color: pumpMode == 2 ? Colors.blue : Colors.grey[400], size: 36),
-                                onPressed: () => setState(() => pumpMode = 2),
-                              ),
-                              const Text('อัตโนมัติ', style: TextStyle(fontSize: 14)),
-                            ],
-                          ),
-                        ],
-                      ),
-                    ],
-                  ),
-                  const SizedBox(height: 24),
-                  Row(
-                    mainAxisAlignment: MainAxisAlignment.center,
-                    children: [
-                      Icon(getModeIcon(), size: 40, color: getModeColor()),
-                      const SizedBox(width: 12),
-                      Text(
-                        'สถานะ: ${getModeText()}',
-                        style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold, color: getModeColor()),
-                      ),
-                    ],
-                  ),
-                  const SizedBox(height: 8),
-                  if (pumpMode == 2)
-                    const Text(
-                      'ปั๊มจะทำงานอัตโนมัติตามค่าที่ตั้งไว้',
-                      style: TextStyle(fontSize: 14, color: Colors.green),
-                      textAlign: TextAlign.center,
-                    ),
-                ],
-              ),
+            // กล่องควบคุมปั๊มน้ำ
+            _buildControlCard(
+              title: 'ปั๊มน้ำ',
+              icon: Icons.water_drop,
+              mode: pumpMode,
+              onModeChange: (newMode) => setState(() => pumpMode = newMode),
+            ),
+            const SizedBox(height: 32),
+            // กล่องควบคุมไฟ LED (เพิ่มใหม่)
+            _buildControlCard(
+              title: 'ไฟปลูกผัก',
+              icon: Icons.lightbulb,
+              mode: lightMode,
+              onModeChange: (newMode) => setState(() => lightMode = newMode),
             ),
             const SizedBox(height: 40),
             const Text(
@@ -383,8 +329,107 @@ class _ControlScreenState extends State<ControlScreen> {
       ),
     );
   }
-}
 
+  Widget _buildControlCard({
+    required String title,
+    required IconData icon,
+    required int mode,
+    required Function(int) onModeChange,
+  }) {
+    return Container(
+      padding: const EdgeInsets.all(24),
+      decoration: BoxDecoration(
+        color: Colors.white,
+        borderRadius: BorderRadius.circular(20),
+        boxShadow: [
+          BoxShadow(
+            color: Colors.black.withOpacity(0.1),
+            blurRadius: 15,
+            offset: const Offset(0, 8),
+          ),
+        ],
+      ),
+      child: Column(
+        children: [
+          Row(
+            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+            children: [
+              Row(
+                children: [
+                  Icon(icon, size: 40, color: getModeColor(mode)),
+                  const SizedBox(width: 16),
+                  Text(
+                    title,
+                    style: const TextStyle(fontSize: 24, fontWeight: FontWeight.bold),
+                  ),
+                ],
+              ),
+              Row(
+                children: [
+                  Column(
+                    children: [
+                      IconButton(
+                        icon: Icon(Icons.power_off,
+                            color: mode == 0 ? Colors.red : Colors.grey[400], size: 36),
+                        onPressed: () => onModeChange(0),
+                      ),
+                      const Text('ปิด', style: TextStyle(fontSize: 14)),
+                    ],
+                  ),
+                  const SizedBox(width: 16),
+                  Column(
+                    children: [
+                      IconButton(
+                        icon: Icon(Icons.power_settings_new,
+                            color: mode == 1 ? Colors.green : Colors.grey[400], size: 36),
+                        onPressed: () => onModeChange(1),
+                      ),
+                      const Text('เปิด', style: TextStyle(fontSize: 14)),
+                    ],
+                  ),
+                  const SizedBox(width: 16),
+                  Column(
+                    children: [
+                      IconButton(
+                        icon: Icon(Icons.auto_awesome,
+                            color: mode == 2 ? Colors.blue : Colors.grey[400], size: 36),
+                        onPressed: () => onModeChange(2),
+                      ),
+                      const Text('อัตโนมัติ', style: TextStyle(fontSize: 14)),
+                    ],
+                  ),
+                ],
+              ),
+            ],
+          ),
+          const SizedBox(height: 24),
+          Row(
+            mainAxisAlignment: MainAxisAlignment.center,
+            children: [
+              Icon(getModeIcon(mode), size: 40, color: getModeColor(mode)),
+              const SizedBox(width: 12),
+              Text(
+                'สถานะ: ${getModeText(mode)}',
+                style: TextStyle(
+                  fontSize: 20,
+                  fontWeight: FontWeight.bold,
+                  color: getModeColor(mode),
+                ),
+              ),
+            ],
+          ),
+          const SizedBox(height: 8),
+          if (mode == 2)
+            const Text(
+              'จะทำงานอัตโนมัติตามช่วงเวลาที่ตั้งไว้',
+              style: TextStyle(fontSize: 14, color: Colors.green),
+              textAlign: TextAlign.center,
+            ),
+        ],
+      ),
+    );
+  }
+}
 // หน้า 4: ข้อมูลอธิบายค่าต่าง ๆ (หน้าใหม่ที่เพิ่ม)
 class InfoScreen extends StatelessWidget {
   const InfoScreen({super.key});
@@ -400,7 +445,7 @@ class InfoScreen extends StatelessWidget {
             icon: Icons.science,
             title: 'pH (ค่าความเป็นกรด-ด่าง)',
             description:
-                'บอกระดับความเป็นกรด-ด่างของน้ำในระบบ\n'
+            'บอกระดับความเป็นกรด-ด่างของน้ำในระบบ\n'
                 '• ช่วงปกติสำหรับผักส่วนใหญ่: 5.5 - 7.0\n'
                 '• ต่ำเกิน → กรดมาก รากอาจถูกทำลาย\n'
                 '• สูงเกิน → ด่างมาก สารอาหารดูดซึมได้น้อย',
@@ -411,7 +456,7 @@ class InfoScreen extends StatelessWidget {
             icon: Icons.electric_meter,
             title: 'EC (Electrical Conductivity)',
             description:
-                'วัดความเข้มข้นของสารอาหารในน้ำ\n'
+            'วัดความเข้มข้นของสารอาหารในน้ำ\n'
                 '• หน่วย: mS/cm\n'
                 '• ช่วงปกติสำหรับผักส่วนใหญ่: 0.8 - 2.0\n'
                 '• ต่ำเกิน → ขาดสารอาหาร\n'
@@ -423,7 +468,7 @@ class InfoScreen extends StatelessWidget {
             icon: Icons.thermostat,
             title: 'อุณหภูมิน้ำ',
             description:
-                'อุณหภูมิของน้ำในระบบ\n'
+            'อุณหภูมิของน้ำในระบบ\n'
                 '• ช่วงปกติ: 22 - 30°C\n'
                 '• ต่ำเกิน → รากดูดซึมสารอาหารช้า\n'
                 '• สูงเกิน → ออกซิเจนในน้ำลด รากอาจเน่า',
@@ -434,13 +479,13 @@ class InfoScreen extends StatelessWidget {
             icon: Icons.water,
             title: 'TDS (Total Dissolved Solids)',
             description:
-                'ปริมาณสารละลายทั้งหมดในน้ำ (หน่วย ppm)\n'
+            'ปริมาณสารละลายทั้งหมดในน้ำ (หน่วย ppm)\n'
                 '• ช่วงปกติสำหรับผัก: 500 - 1500 ppm\n'
                 '• มักใช้คู่กับ EC เพื่อยืนยันความเข้มข้น',
             normalRange: 'ช่วงปกติ:500 - 1500 ppm',
             color: Colors.teal,
           ),
-           _buildInfoCard(
+          _buildInfoCard(
             icon: Icons.manage_accounts,
             title: ' ผู้จัดทำ',
             description:''
@@ -451,7 +496,7 @@ class InfoScreen extends StatelessWidget {
             normalRange: 'คณะวิศวกรรมศาสตร์\n' ' สาขาวิศวกรรมไฟฟ้า สาขาวิชาวิศวกรรมคอมพิวเตอร์'  ,
             color: Colors.teal,
           ),
-         
+
           const SizedBox(height: 40),
           const Text(
             'หมายเหตุ: ค่าปกติอาจแตกต่างกันตามชนิดผักและระยะการเจริญเติบโต',
